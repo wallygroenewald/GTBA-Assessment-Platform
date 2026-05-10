@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Candidate Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="main-card">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <h2>
+
+                Candidate Results
+
+            </h2>
+
+            <div>
+
+                {% if role == "Super Admin" %}
+
+                <a href="/users"
+                   class="btn btn-primary me-2">
+
+                    Manage Users
+
+                </a>
+
+                {% endif %}
+
+                <a href="/logout"
+                   class="btn btn-danger">
+
+                    Logout
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <table class="table table-striped table-hover">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>City</th>
+                    <th>Region</th>
+                    <th>Experience</th>
+                    <th>License</th>
+                    <th>Vehicle</th>
+                    <th>Score</th>
+                    <th>Recommendation</th>
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for c in candidates %}
+
+                <tr>
+
+                    <td>
+
+                        {{ c.fullname }}
+
+                    </td>
+
+                    <td>
+
+                        {{ c.email }}
+
+                    </td>
+
+                    <td>
+
+                        {{ c.phone }}
+
+                    </td>
+
+                    <td>
+
+                        {{ c.city }}
+
+                    </td>
+
+                    <td>
+
+                        {{ c.region }}
+
+                    </td>
+
+                    <td>
+
+                        {{ c.experience }}
+
+                    </td>
+
+                    <td>
+
+                        {{ c.license }}
+
+                    </td>
+
+                    <td>
+
+                        {{ c.vehicle }}
+
+                    </td>
+
+                    <td>
+
+                        <strong>
+
+                            {{ c.score }}/50
+
+                        </strong>
+
+                    </td>
+
+                    <td>
+
+                        {% if c.result == "PERFECT FIT" %}
+
+                            <span class="badge bg-success">
+
+                                PERFECT FIT
+
+                            </span>
+
+                        {% elif c.result == "OKAY - NEEDS WORK" %}
+
+                            <span class="badge bg-warning text-dark">
+
+                                NEEDS WORK
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-danger">
+
+                                DO NOT EMPLOY
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        <div class="d-flex gap-2">
+
+                            <a href="/report/{{ c.id }}"
+                               class="btn btn-primary btn-sm">
+
+                                Print PDF
+
+                            </a>
+
+                            <a href="/delete/{{ c.id }}"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Delete candidate?')">
+
+                                Delete
+
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>

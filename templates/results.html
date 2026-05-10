@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Assessment Results</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="main-card text-center">
+
+        <h1>
+            Assessment Completed
+        </h1>
+
+        <h3 class="mt-4">
+            Thank you {{ candidate.fullname }}
+        </h3>
+
+        <div class="display-3 mt-4">
+            {{ candidate.score }}/50
+        </div>
+
+        <div class="mt-4">
+
+            {% if candidate.result == "PERFECT FIT" %}
+
+                <div class="alert alert-success fs-4">
+
+                    PERFECT FIT
+
+                </div>
+
+            {% elif candidate.result == "OKAY - NEEDS WORK" %}
+
+                <div class="alert alert-warning fs-4">
+
+                    OKAY - NEEDS WORK
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-danger fs-4">
+
+                    DO NOT EMPLOY
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
