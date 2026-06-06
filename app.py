@@ -688,9 +688,9 @@ def report(id):
 
     content = []
     #LOGO
-    logo =Image('static/logo.png')
+    logo = Image('static/gtba_logo.png', width=100, height=100)
     logo.drawHeight=80
-    logo.drawWidth=220
+    logo.drawWidth=100
     content.append(logo)
     content.append(Spacer(1,20))
 
