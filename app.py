@@ -28,7 +28,28 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///assessment.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 DB = SQLAlchemy(app)
+# =========================================
+# COMPANY MODEL
+# =========================================
 
+class Company(DB.Model):
+
+    id = DB.Column(DB.Integer, primary_key=True)
+
+    name = DB.Column(
+        DB.String(200),
+        unique=True
+    )
+
+    logo = DB.Column(
+        DB.String(300),
+        default='gtba_logo.png'
+    )
+
+    active = DB.Column(
+        DB.Boolean,
+        default=True
+    )
 
 # =========================================
 # USER MODEL
@@ -45,6 +66,10 @@ class User(DB.Model):
     role = DB.Column(DB.String(100))
 
     region = DB.Column(DB.String(100))
+    company_id = DB.Column(
+    DB.Integer,
+    default=1
+)
 
 
 # =========================================
@@ -100,6 +125,11 @@ class Candidate(DB.Model):
 
     position = DB.Column(DB.String(200))
 
+    company_id = DB.Column(
+    DB.Integer,
+    default=1
+ )
+
     experience = DB.Column(DB.String(100))
 
     license = DB.Column(DB.String(20))
@@ -121,6 +151,23 @@ with app.app_context():
 
     DB.create_all()
 
+    # CREATE DEFAULT COMPANY
+
+    company = Company.query.filter_by(
+        name='GTBA Demo'
+    ).first()
+
+    if not company:
+
+        company = Company(
+            name='GTBA Demo'
+        )
+
+        DB.session.add(company)
+        DB.session.commit()
+
+    # CREATE ADMIN USER
+
     admin_exists = User.query.filter_by(
         username='admin'
     ).first()
@@ -132,19 +179,19 @@ with app.app_context():
             username='admin',
 
             password=generate_password_hash(
-                'GTBAAdmin2026'
+                'Nkgwete123'
             ),
 
             role='Super Admin',
 
-            region='All'
+            region='All',
+
+            company_id=1
 
         )
 
         DB.session.add(admin)
-
         DB.session.commit()
-
 
 # =========================================
 # HOME
