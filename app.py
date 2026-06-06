@@ -22,7 +22,7 @@ from reportlab.platypus import Image
 
 app = Flask(__name__)
 
-app.secret_key = 'nkgwete_secret_key'
+app.secret_key = 'gtba_talent_secret_key'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///assessment.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -132,7 +132,7 @@ with app.app_context():
             username='admin',
 
             password=generate_password_hash(
-                'Nkgwete123'
+                'GTBAAdmin2026'
             ),
 
             role='Super Admin',
