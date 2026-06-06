@@ -685,19 +685,19 @@ def report(id):
     doc = SimpleDocTemplate(buffer)
 
     styles = getSampleStyleSheet()
-
+    
     content = []
     #LOGO
-    logo = Image('static/gtba_logo.png', width=100, height=100)
-    logo.drawHeight=80
-    logo.drawWidth=100
+    logo = Image('static/gtba_logo.png' )
+    logo.drawHeight=140
+    logo.drawWidth=140
     content.append(logo)
-    content.append(Spacer(1,20))
+    content.append(Spacer(1,15))
 
     content.append(
     Paragraph(
         'Confidential Candidate Assessment Report',
-        styles['BodyText']
+        styles['Title']
     )
 )
 
