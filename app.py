@@ -50,7 +50,28 @@ class Company(DB.Model):
         DB.Boolean,
         default=True
     )
+# =========================================
+# SETTINGS MODEL
+# =========================================
 
+class Settings(DB.Model):
+
+    id = DB.Column(DB.Integer, primary_key=True)
+
+    question_count = DB.Column(
+        DB.Integer,
+        default=50
+    )
+
+    time_limit = DB.Column(
+        DB.Integer,
+        default=60
+    )
+
+    pass_mark = DB.Column(
+        DB.Integer,
+        default=70
+    )
 # =========================================
 # USER MODEL
 # =========================================
@@ -116,7 +137,25 @@ class Candidate(DB.Model):
     fullname = DB.Column(DB.String(200))
 
     email = DB.Column(DB.String(200))
+    
+    username = DB.Column(
+        DB.String(100),
+     unique=True
+    )
 
+    password = DB.Column(
+    DB.String(300)
+    )
+
+    status = DB.Column(
+    DB.String(50),
+    default='Pending'
+    )
+
+    completed = DB.Column(
+    DB.Boolean,
+    default=False
+    )
     phone = DB.Column(DB.String(100))
 
     city = DB.Column(DB.String(100))
@@ -143,6 +182,11 @@ class Candidate(DB.Model):
     answers = DB.Column(DB.Text)
 
 
+
+# =========================================
+# CREATE DATABASE
+# =========================================
+
 # =========================================
 # CREATE DATABASE
 # =========================================
@@ -151,19 +195,19 @@ with app.app_context():
 
     DB.create_all()
 
-    # CREATE DEFAULT COMPANY
+    # SETTINGS
 
-    company = Company.query.filter_by(
-        name='GTBA Demo'
-    ).first()
+    settings = Settings.query.first()
 
-    if not company:
+    if not settings:
 
-        company = Company(
-            name='GTBA Demo'
+        settings = Settings(
+            question_count=50,
+            time_limit=60,
+            pass_mark=70
         )
 
-        DB.session.add(company)
+        DB.session.add(settings)
         DB.session.commit()
 
     # CREATE ADMIN USER
@@ -184,13 +228,12 @@ with app.app_context():
 
             role='Super Admin',
 
-            region='All',
-
-            company_id=1
+            region='All'
 
         )
 
         DB.session.add(admin)
+
         DB.session.commit()
 
 # =========================================
@@ -210,43 +253,29 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 
-    positions = Position.query.all()
+    if not session.get('candidate_id'):
+        return redirect('/candidate-login')
+
+    candidate = Candidate.query.get(
+        session['candidate_id']
+    )
 
     if request.method == 'POST':
 
-        candidate = Candidate(
+        candidate.phone = request.form['phone']
 
-            fullname=request.form['fullname'],
-            email=request.form['email'],
-            phone=request.form['phone'],
-            city=request.form['city'],
+        candidate.city = request.form['city']
 
-            region=request.form['region'],
+        candidate.experience = request.form['experience']
 
-            position=request.form['position'],
+        candidate.license = request.form['license']
 
-            experience=request.form['experience'],
-
-            license=request.form['license'],
-
-            vehicle=request.form['vehicle'],
-
-            score=0,
-
-            result='',
-
-            answers=''
-
-        )
-
-        DB.session.add(candidate)
+        candidate.vehicle = request.form['vehicle']
 
         DB.session.commit()
 
-        session['candidate_id'] = candidate.id
-
         selected_position = Position.query.filter_by(
-            name=request.form['position']
+            name=candidate.position
         ).first()
 
         question_list = Question.query.filter_by(
@@ -274,9 +303,11 @@ def register():
 
             })
 
+        settings = Settings.query.first()
+
         random_questions = random.sample(
             questions,
-            min(50, len(questions))
+            min(settings.question_count, len(questions))
         )
 
         session['questions'] = random_questions
@@ -285,10 +316,8 @@ def register():
 
     return render_template(
         'register.html',
-        positions=positions
+        candidate=candidate
     )
-
-
 # =========================================
 # TEST
 # =========================================
@@ -322,7 +351,14 @@ def test():
 
                 score += 1
 
-        if score >= 45:
+        settings = Settings.query.first()
+
+        required_score = round(
+         settings.question_count *
+         (settings.pass_mark / 100)
+         )
+
+        if score >= required_score:
 
             result = 'PERFECT FIT'
 
@@ -365,7 +401,42 @@ def thankyou():
 
     return render_template('thankyou.html')
 
+# =========================================
+# CANDIDATE LOGIN
+# =========================================
 
+@app.route('/candidate-login', methods=['GET', 'POST'])
+def candidate_login():
+
+    error = None
+
+    if request.method == 'POST':
+
+        username = request.form['username']
+
+        password = request.form['password']
+
+        candidate = Candidate.query.filter_by(
+            username=username
+        ).first()
+
+        if candidate and check_password_hash(
+            candidate.password,
+            password
+        ):
+
+            session['candidate_id'] = candidate.id
+
+            return redirect('/register')
+
+        else:
+
+            error = 'Invalid Login'
+
+    return render_template(
+        'candidate_login.html',
+        error=error
+    )
 # =========================================
 # ADMIN LOGIN
 # =========================================
@@ -724,8 +795,15 @@ def report(id):
         return redirect('/admin')
 
     candidate = Candidate.query.get_or_404(id)
+    settings = Settings.query.first()
 
-    answers = json.loads(candidate.answers)
+    if candidate.answers and candidate.answers.strip():
+
+     answers = json.loads(candidate.answers)
+
+    else:
+
+     answers = []
 
     buffer = BytesIO()
 
@@ -779,12 +857,7 @@ def report(id):
         )
     )
 
-    content.append(
-        Paragraph(
-            f'<b>Score:</b> {candidate.score}/50',
-            styles['BodyText']
-        )
-    )
+  
 
     content.append(
         Paragraph(
@@ -795,9 +868,18 @@ def report(id):
 
     content.append(Spacer(1, 20))
 
-    for i, a in enumerate(answers):
-
+    if len(answers) == 0:
+        
         content.append(
+            Paragraph(
+                "Candidate has not completed an assesment.",
+                styles['BodyText']
+            )
+        )
+    else:
+        for i, a in enumerate(answers):
+
+         content.append(
             Paragraph(
                 f'<b>Question {i+1}:</b> {a["question"]}',
                 styles['BodyText']
@@ -831,7 +913,68 @@ def report(id):
         mimetype='application/pdf'
     )
 
+# =========================================
+# CANDIDATE MANAGEMENT
+# =========================================
 
+@app.route('/candidates', methods=['GET', 'POST'])
+def candidates():
+
+    if session.get('role') != 'Super Admin':
+        return redirect('/dashboard')
+
+    if request.method == 'POST':
+
+        candidate = Candidate(
+
+            fullname=request.form['fullname'],
+
+            email=request.form['email'],
+
+            username=request.form['username'],
+
+            password=generate_password_hash(
+                request.form['password']
+            ),
+
+            phone='',
+
+            city='',
+
+            region=request.form['region'],
+
+            position=request.form['position'],
+
+            experience='',
+
+            license='',
+
+            vehicle='',
+
+            score=0,
+
+            result='Not Tested',
+
+            status="Not Started",
+
+            completed=False,
+
+            answers=''
+
+        )
+
+        DB.session.add(candidate)
+        DB.session.commit()
+
+    candidates = Candidate.query.all()
+
+    positions = Position.query.all()
+
+    return render_template(
+        'candidates.html',
+        candidates=candidates,
+        positions=positions
+    )
 # =========================================
 # LOGOUT
 # =========================================

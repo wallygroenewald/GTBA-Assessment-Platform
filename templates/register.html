@@ -11,7 +11,15 @@
           href="{{ url_for('static', filename='style.css') }}">
 
 </head>
+<div class="alert alert-info">
 
+    <strong>Candidate:</strong> {{ candidate.fullname }}<br>
+
+    <strong>Position:</strong> {{ candidate.position }}<br>
+
+    <strong>Email:</strong> {{ candidate.email }}
+
+</div>
 <body>
 
 <div class="container">
@@ -40,21 +48,7 @@
 
         <form method="POST">
 
-            <!-- FULL NAME -->
-
-            <input type="text"
-                   name="fullname"
-                   class="form-control mb-3"
-                   placeholder="Full Name"
-                   required>
-
-            <!-- EMAIL -->
-
-            <input type="email"
-                   name="email"
-                   class="form-control mb-3"
-                   placeholder="Email Address"
-                   required>
+    
 
             <!-- PHONE -->
 
@@ -72,53 +66,7 @@
                    placeholder="City"
                    required>
 
-            <!-- POSITION -->
-
-            <select name="position"
-                    class="form-control mb-3"
-                    required>
-
-                <option value="">
-
-                    Select Position
-
-                </option>
-
-                {% for p in positions %}
-
-                <option value="{{ p.name }}">
-
-                    {{ p.name }}
-
-                </option>
-
-                {% endfor %}
-
-            </select>
-
-            <!-- REGION -->
-
-            <select name="region"
-                    class="form-control mb-3"
-                    required>
-
-                <option value="">
-
-                    Select Province
-
-                </option>
-
-                <option>Eastern Cape</option>
-                <option>Free State</option>
-                <option>Gauteng</option>
-                <option>KwaZulu-Natal</option>
-                <option>Limpopo</option>
-                <option>Mpumalanga</option>
-                <option>Northern Cape</option>
-                <option>North West</option>
-                <option>Western Cape</option>
-
-            </select>
+        
 
             <!-- EXPERIENCE -->
 
