@@ -704,7 +704,7 @@ def report(id):
     content.append(Spacer(1, 20))
     content.append(
         Paragraph(
-            'Nkgwete Technologies Assessment Report',
+            'GTBA Talent Platform Assessment Report',
             styles['Title']
         )
     )
