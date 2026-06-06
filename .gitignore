@@ -2,4 +2,6 @@ venv/
 __pycache__/
 instance/
 *.pyc
-web: gunicorn app:app
+.env
+.DS_Store
+.vscode/

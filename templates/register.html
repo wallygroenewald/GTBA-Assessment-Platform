@@ -18,6 +18,16 @@
 
     <div class="main-card">
 
+        <!-- LOGO -->
+
+        <div class="text-center mb-4">
+
+            <img src="{{ url_for('static', filename='logo.png') }}"
+                 alt="Nkgwete Logo"
+                 style="max-width:220px; height:auto;">
+
+        </div>
+
         <h2 class="mb-4">
 
             Candidate Registration
@@ -58,6 +68,30 @@
                    placeholder="City"
                    required>
 
+            <!-- POSITION -->
+
+            <select name="position"
+                    class="form-control mb-3"
+                    required>
+
+                <option value="">
+
+                    Select Position
+
+                </option>
+
+                {% for p in positions %}
+
+                <option>
+
+                    {{ p.name }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
             <!-- REGION -->
 
             <select name="region"
@@ -70,59 +104,15 @@
 
                 </option>
 
-                <option>
-
-                    Eastern Cape
-
-                </option>
-
-                <option>
-
-                    Free State
-
-                </option>
-
-                <option>
-
-                    Gauteng
-
-                </option>
-
-                <option>
-
-                    KwaZulu-Natal
-
-                </option>
-
-                <option>
-
-                    Limpopo
-
-                </option>
-
-                <option>
-
-                    Mpumalanga
-
-                </option>
-
-                <option>
-
-                    Northern Cape
-
-                </option>
-
-                <option>
-
-                    North West
-
-                </option>
-
-                <option>
-
-                    Western Cape
-
-                </option>
+                <option>Eastern Cape</option>
+                <option>Free State</option>
+                <option>Gauteng</option>
+                <option>KwaZulu-Natal</option>
+                <option>Limpopo</option>
+                <option>Mpumalanga</option>
+                <option>Northern Cape</option>
+                <option>North West</option>
+                <option>Western Cape</option>
 
             </select>
 
@@ -138,29 +128,10 @@
 
                 </option>
 
-                <option>
-
-                    0-1 Years
-
-                </option>
-
-                <option>
-
-                    2-3 Years
-
-                </option>
-
-                <option>
-
-                    4-5 Years
-
-                </option>
-
-                <option>
-
-                    5+ Years
-
-                </option>
+                <option>0-1 Years</option>
+                <option>2-3 Years</option>
+                <option>4-5 Years</option>
+                <option>5+ Years</option>
 
             </select>
 
@@ -176,17 +147,8 @@
 
                 </option>
 
-                <option>
-
-                    Yes
-
-                </option>
-
-                <option>
-
-                    No
-
-                </option>
+                <option>Yes</option>
+                <option>No</option>
 
             </select>
 
@@ -202,17 +164,8 @@
 
                 </option>
 
-                <option>
-
-                    Yes
-
-                </option>
-
-                <option>
-
-                    No
-
-                </option>
+                <option>Yes</option>
+                <option>No</option>
 
             </select>
 

@@ -4,9 +4,11 @@
 
     <title>Users</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 
 </head>
 
@@ -15,23 +17,44 @@
 <div class="container">
 
     <div class="main-card">
+       <div class="text-center mb-4">
 
+    <img src="{{ url_for('static', filename='logo.png') }}"
+         alt="Nkgwete Logo"
+         style="max-width:220px; height:auto;">
+
+</div>
         <div class="d-flex justify-content-between align-items-center">
 
-            <h2>System Users</h2>
+            <h2>
 
-            <a href="/create-user"
-               class="btn btn-primary">
+                System Users
 
-                Add User
+            </h2>
 
-            </a>
+            <div>
+
+                <a href="/create-user"
+                   class="btn btn-primary me-2">
+
+                    Add User
+
+                </a>
+
+                <a href="/dashboard"
+                   class="btn btn-secondary">
+
+                    Back
+
+                </a>
+
+            </div>
 
         </div>
 
         <table class="table table-striped mt-4">
 
-            <thead>
+            <thead class="table-dark">
 
                 <tr>
 
@@ -50,24 +73,125 @@
 
                 <tr>
 
-                    <td>{{ u.username }}</td>
+                    <td>
 
-                    <td>{{ u.role }}</td>
+                        {{ u.username }}
 
-                    <td>{{ u.region }}</td>
+                    </td>
 
                     <td>
 
-                        <a href="/reset-password/{{ u.id }}"
-                           class="btn btn-warning btn-sm">
+                        {{ u.role }}
+
+                    </td>
+
+                    <td>
+
+                        {{ u.region }}
+
+                    </td>
+
+                    <td>
+
+                        <!-- RESET PASSWORD -->
+
+                        <button class="btn btn-warning btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#resetModal{{ u.id }}">
 
                             Reset Password
 
+                        </button>
+
+                        <!-- DELETE USER -->
+
+                        {% if session['role'] == 'Super Admin' %}
+
+                        <a href="/delete-user/{{ u.id }}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Delete this user?')">
+
+                            Delete
+
                         </a>
+
+                        {% endif %}
 
                     </td>
 
                 </tr>
+
+                <!-- RESET PASSWORD MODAL -->
+
+                <div class="modal fade"
+                     id="resetModal{{ u.id }}"
+                     tabindex="-1">
+
+                    <div class="modal-dialog">
+
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+
+                                <h5 class="modal-title">
+
+                                    Reset Password
+
+                                </h5>
+
+                                <button type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal">
+
+                                </button>
+
+                            </div>
+
+                            <form method="POST"
+                                  action="/reset-password/{{ u.id }}">
+
+                                <div class="modal-body">
+
+                                    <p>
+
+                                        Reset password for:
+                                        <strong>{{ u.username }}</strong>
+
+                                    </p>
+
+                                    <input type="password"
+                                           name="password"
+                                           class="form-control"
+                                           placeholder="Type New Password"
+                                           required>
+
+                                </div>
+
+                                <div class="modal-footer">
+
+                                    <button type="button"
+                                            class="btn btn-secondary"
+                                            data-bs-dismiss="modal">
+
+                                        Cancel
+
+                                    </button>
+
+                                    <button class="btn btn-primary">
+
+                                        Update Password
+
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
 
                 {% endfor %}
 
@@ -78,6 +202,8 @@
     </div>
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

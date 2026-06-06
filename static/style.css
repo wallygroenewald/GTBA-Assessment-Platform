@@ -68,3 +68,6 @@ body {
     font-size: 28px;
     font-weight: bold;
 }
+img {
+    user-select: none;
+}

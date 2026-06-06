@@ -13,7 +13,13 @@
 <body>
 
 <div class="container">
+    <div class="text-center mb-4">
 
+    <img src="{{ url_for('static', filename='logo.png') }}"
+         alt="Nkgwete Logo"
+         style="max-width:220px; height:auto;">
+
+</div>
     <div class="main-card">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -36,7 +42,12 @@
                 </a>
 
                 {% endif %}
+               <a href="/positions"
+                  class="btn btn-dark me-2">
 
+                  Manage Positions
+
+                </a>
                 <a href="/logout"
                    class="btn btn-danger">
 
