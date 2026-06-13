@@ -20,6 +20,7 @@
          style="max-width:220px; height:auto;">
 
 </div>
+
     <div class="main-card">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -30,38 +31,35 @@
 
             </h2>
 
-            <div>
+<div class="text-right mb-4">
 
-                {% if role == "Super Admin" %}
+    <a href="/dashboard" class="btn btn-primary me-2">
+        Dashboard
+    </a>
 
-                <a href="/candidates"
-                   class="btn btn-primary me-2">
+    <a href="/candidates" class="btn btn-success me-2">
+        Candidates
+    </a>
 
-                    Manage Candidates
+    <a href="/positions" class="btn btn-dark me-2">
+        Positions
+    </a>
 
-                </a>
-                <a href="/users"
-                   class="btn btn-primary me-2">
-                   Manage Users
-                
-                </a>
+    <a href="/users" class="btn btn-warning me-2">
+        Users
+    </a>
+   
+    <a href="/companies" class="btn btn-info me-2">
+    Companies
+</a>
 
-                {% endif %}
-               <a href="/positions"
-                  class="btn btn-dark me-2">
-
-                  Manage Positions
-
-                </a>
-                <a href="/logout"
-                   class="btn btn-danger">
-
-                    Logout
-
-                </a>
-
-            </div>
-
+    <a href="/logout" class="btn btn-danger">
+        Logout
+    </a>
+<a href="/settings" class="btn btn-info me-2">
+    Settings
+</a>
+</div>
         </div>
 
         <table class="table table-striped table-hover">
@@ -75,6 +73,7 @@
                     <th>Phone</th>
                     <th>City</th>
                     <th>Region</th>
+                    <th>Status</th>
                     <th>Experience</th>
                     <th>License</th>
                     <th>Vehicle</th>
@@ -121,7 +120,29 @@
                         {{ c.region }}
 
                     </td>
+<td>
 
+{% if c.status == "Completed" %}
+
+<span class="badge bg-success">
+    Completed
+</span>
+
+{% elif c.status == "In Progress" %}
+
+<span class="badge bg-warning text-dark">
+    In Progress
+</span>
+
+{% else %}
+
+<span class="badge bg-secondary">
+    Not Started
+</span>
+
+{% endif %}
+
+</td>
                     <td>
 
                         {{ c.experience }}
@@ -144,7 +165,7 @@
 
                         <strong>
 
-                            {{ c.score }}/50
+                            {{ c.score }}/{{ question_count }}
 
                         </strong>
 
