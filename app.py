@@ -50,6 +50,35 @@ class Company(DB.Model):
         DB.Boolean,
         default=True
     )
+
+# =========================================
+# COMPANIES
+# =========================================
+
+@app.route('/companies', methods=['GET', 'POST'])
+def companies():
+
+    if session.get('role') != 'Super Admin':
+        return redirect('/dashboard')
+
+    if request.method == 'POST':
+
+        company = Company(
+
+            name=request.form['name']
+
+        )
+
+        DB.session.add(company)
+
+        DB.session.commit()
+
+    companies = Company.query.all()
+
+    return render_template(
+        'companies.html',
+        companies=companies
+    )
 # =========================================
 # SETTINGS MODEL
 # =========================================
@@ -382,6 +411,10 @@ def test():
 
             candidate.answers = json.dumps(candidate_answers)
 
+            candidate.status = 'Completed'
+
+            candidate.completed = True
+
             DB.session.commit()
 
         return redirect('/thankyou')
@@ -419,7 +452,13 @@ def candidate_login():
         candidate = Candidate.query.filter_by(
             username=username
         ).first()
+        if candidate.completed:
 
+            error = 'You have already completed the assessment.'
+            return render_template(
+                'candidate_login.html',
+                error=error
+            )
         if candidate and check_password_hash(
             candidate.password,
             password
@@ -427,11 +466,16 @@ def candidate_login():
 
             session['candidate_id'] = candidate.id
 
+            candidate.status = 'In Progress'
+
+            DB.session.commit()
+
             return redirect('/register')
 
         else:
-
             error = 'Invalid Login'
+
+        DB.session.commit()
 
     return render_template(
         'candidate_login.html',
@@ -508,11 +552,14 @@ def dashboard():
             Candidate.score.desc()
         ).all()
 
+    settings = Settings.query.first()
+
     return render_template(
-        'admin_dashboard.html',
-        candidates=candidates,
-        role=role
-    )
+    'admin_dashboard.html',
+    candidates=candidates,
+    role=role,
+    question_count=settings.question_count
+)
 
 
 # =========================================
@@ -571,7 +618,9 @@ def create_user():
 
                 role=request.form['role'],
 
-                region=request.form['region']
+                region=request.form['region'],
+
+                company_id=request.form['company_id']
 
             )
 
@@ -581,9 +630,12 @@ def create_user():
 
             success = 'User created successfully'
 
+    companies = Company.query.all()
+    
     return render_template(
         'create_user.html',
-        success=success
+        success=success,
+        companies=companies
     )
 
 
@@ -945,6 +997,8 @@ def candidates():
 
             position=request.form['position'],
 
+            company_id=int(request.form['company_id']),
+
             experience='',
 
             license='',
@@ -970,10 +1024,45 @@ def candidates():
 
     positions = Position.query.all()
 
+    companies = Company.query.all()
+
     return render_template(
         'candidates.html',
         candidates=candidates,
-        positions=positions
+        positions=positions,
+        companies=companies
+    )
+# =========================================
+# SETTINGS
+# =========================================
+
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
+
+    if session.get('role') != 'Super Admin':
+        return redirect('/dashboard')
+
+    settings = Settings.query.first()
+
+    if request.method == 'POST':
+
+        settings.question_count = int(
+            request.form['question_count']
+        )
+
+        settings.time_limit = int(
+            request.form['time_limit']
+        )
+
+        settings.pass_mark = int(
+            request.form['pass_mark']
+        )
+
+        DB.session.commit()
+
+    return render_template(
+        'settings.html',
+        settings=settings
     )
 # =========================================
 # LOGOUT
